@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Paquetes estilo Duolingo:
-import 'package:chiclet/chiclet.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:animations/animations.dart';
-
 void main() => runApp(const MyApp());
 
 /// ======================================================
@@ -62,7 +57,7 @@ class _Building extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 10,
             offset: const Offset(0, 6),
           ),
@@ -90,7 +85,7 @@ class _Building extends StatelessWidget {
                   4,
                   (_) => Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
@@ -123,7 +118,7 @@ class _Cloud extends StatelessWidget {
         width: s,
         height: s,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
+          color: Colors.white.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(999),
         ),
       );
@@ -139,6 +134,43 @@ class _Cloud extends StatelessWidget {
           Positioned(left: width * 0.25, bottom: width * 0.08, child: _bubble(width * 0.55)),
           Positioned(left: width * 0.5, bottom: 0, child: _bubble(width * 0.45)),
         ],
+      ),
+    );
+  }
+}
+
+/// ======================================================
+/// BOTÓN ESTILO CHICLET (Duolingo)
+/// ======================================================
+class CustomChicletButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final Widget child;
+  final Color backgroundColor;
+
+  const CustomChicletButton({
+    super.key,
+    required this.onPressed,
+    required this.child,
+    this.backgroundColor = const Color(0xFF58CC02),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 4),
+        decoration: BoxDecoration(
+          color: Color.lerp(backgroundColor, Colors.black, 0.2),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: child,
+        ),
       ),
     );
   }
@@ -203,7 +235,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
         cardTheme: CardThemeData(
           elevation: 6,
-          shadowColor: Colors.black.withOpacity(0.10),
+          shadowColor: Colors.black.withValues(alpha: 0.10),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           margin: EdgeInsets.zero,
         ),
@@ -306,14 +338,14 @@ class _MapHomeScreenState extends State<MapHomeScreen> {
       appBar: AppBar(title: const Text('Mapa del Campus')),
       body: Stack(
         children: [
-          // “Mapa” placeholder con animación suave
+          // “Mapa” placeholder
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [cs.primaryContainer.withOpacity(0.35), const Color(0xFFF7F7F7)],
+                  colors: [cs.primaryContainer.withValues(alpha: 0.35), const Color(0xFFF7F7F7)],
                 ),
               ),
               child: Center(
@@ -321,15 +353,12 @@ class _MapHomeScreenState extends State<MapHomeScreen> {
                   'MAPA / PLANO (placeholder)\n\nArriba: filtro\nAbajo: lugares (demo)',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: cs.onSurfaceVariant, fontWeight: FontWeight.w700),
-                )
-                    .animate()
-                    .fadeIn(duration: 350.ms)
-                    .slideY(begin: 0.05, end: 0, duration: 350.ms),
+                ),
               ),
             ),
           ),
 
-          // Filtro superior con animación
+          // Filtro superior
           Positioned(
             top: 12,
             left: 12,
@@ -337,13 +366,10 @@ class _MapHomeScreenState extends State<MapHomeScreen> {
             child: _TopFilterBar(
               selected: selectedFilter,
               onSelected: (v) => setState(() => selectedFilter = v),
-            )
-                .animate()
-                .fadeIn(duration: 250.ms)
-                .slideY(begin: -0.2, end: 0, duration: 250.ms),
+            ),
           ),
 
-          // Lista de lugares “demo” con transición OpenContainer + botones Chiclet
+          // Lista de lugares “demo”
           Positioned(
             left: 12,
             right: 12,
@@ -364,54 +390,44 @@ class _MapHomeScreenState extends State<MapHomeScreen> {
                       spacing: 10,
                       runSpacing: 10,
                       children: places.map((p) {
-                        return OpenContainer(
-                          transitionType: ContainerTransitionType.fadeThrough,
-                          openColor: Colors.white,
-                          closedColor: Colors.transparent,
-                          closedElevation: 0,
-                          openElevation: 0,
-                          closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                          openBuilder: (context, _) {
-                            // Pantalla “detalle” (con lo mismo que el bottom sheet, pero en page)
-                            return PlaceDetailPage(
-                              place: p,
-                              filterLabel: _filterLabel(selectedFilter),
-                              people: _filteredPeople(p),
-                            );
-                          },
-                          closedBuilder: (context, open) {
-                            return ChicletButton(
-                              onPressed: open,
-                              backgroundColor: const Color(0xFF58CC02),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.location_on_outlined, color: Colors.white),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      p.name,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                  ],
+                        return CustomChicletButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PlaceDetailPage(
+                                  place: p,
+                                  filterLabel: _filterLabel(selectedFilter),
+                                  people: _filteredPeople(p),
                                 ),
                               ),
                             );
                           },
+                          backgroundColor: const Color(0xFF58CC02),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.location_on_outlined, color: Colors.white),
+                                const SizedBox(width: 8),
+                                Text(
+                                  p.name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       }).toList(),
                     ),
                   ],
                 ),
               ),
-            )
-                .animate()
-                .fadeIn(duration: 300.ms)
-                .slideY(begin: 0.15, end: 0, duration: 300.ms),
+            ),
           ),
         ],
       ),
@@ -419,9 +435,6 @@ class _MapHomeScreenState extends State<MapHomeScreen> {
   }
 }
 
-/// ======================================================
-/// FILTRO SUPERIOR (con micro animación)
-/// ======================================================
 class _TopFilterBar extends StatelessWidget {
   const _TopFilterBar({required this.selected, required this.onSelected});
 
@@ -436,7 +449,7 @@ class _TopFilterBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.10),
+            color: Colors.black.withValues(alpha: 0.10),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -492,15 +505,10 @@ class _TopFilterBar extends StatelessWidget {
       avatar: Icon(icon, size: 18),
       label: Text(label),
       showCheckmark: false,
-    )
-        .animate(target: isSelected ? 1 : 0)
-        .scale(begin: const Offset(1, 1), end: const Offset(1.03, 1.03), duration: 120.ms);
+    );
   }
 }
 
-/// ======================================================
-/// DETALLE EN PANTALLA (abierta con OpenContainer)
-/// ======================================================
 class PlaceDetailPage extends StatelessWidget {
   const PlaceDetailPage({
     super.key,
@@ -556,7 +564,7 @@ class PlaceDetailPage extends StatelessWidget {
                 ],
               ),
             ),
-          ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.06, end: 0, duration: 250.ms),
+          ),
 
           const SizedBox(height: 16),
 
@@ -568,7 +576,7 @@ class PlaceDetailPage extends StatelessWidget {
             children: place.spaces
                 .map((s) => Chip(label: Text(s), avatar: const Icon(Icons.place_outlined, size: 18)))
                 .toList(),
-          ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.06, end: 0, duration: 250.ms),
+          ),
 
           const SizedBox(height: 18),
 
@@ -587,12 +595,11 @@ class PlaceDetailPage extends StatelessWidget {
           if (people.isEmpty)
             Text('No hay personas para este filtro en este lugar.', style: TextStyle(color: cs.onSurfaceVariant)),
 
-          ...people.map((p) => _PersonTile(person: p)).toList().animate(interval: 60.ms).fadeIn(duration: 220.ms).slideY(begin: 0.08, end: 0),
+          ...people.map((p) => _PersonTile(person: p)),
 
           const SizedBox(height: 14),
 
-          // Botón tipo Duolingo (Chiclet)
-          ChicletButton(
+          CustomChicletButton(
             onPressed: () {},
             backgroundColor: const Color(0xFF58CC02),
             child: const Padding(
@@ -607,7 +614,7 @@ class PlaceDetailPage extends StatelessWidget {
                 ],
               ),
             ),
-          ).animate().fadeIn(duration: 250.ms).scale(begin: const Offset(0.98, 0.98), end: const Offset(1, 1)),
+          ),
         ],
       ),
     );
