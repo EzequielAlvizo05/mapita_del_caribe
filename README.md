@@ -1,2 +1,16 @@
 # mapita_del_caribe
-Aplicación creada durante un hackaton con el objetivo de crear un mapa que facilite el entendimiento del mismo y sirva como guía para visitantes
+
+Aplicación diseñada para actuar como mapa de la universidad del caribe
+
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
