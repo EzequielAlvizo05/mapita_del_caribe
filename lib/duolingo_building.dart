@@ -135,7 +135,6 @@ class OpeningRow extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
           child: Row(
-            // Distribución justificada para múltiples puertas, centrada para una sola
             mainAxisAlignment: count <= 1 ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(count, (index) {
@@ -145,15 +144,15 @@ class OpeningRow extends StatelessWidget {
               } else {
                 doorLabel = "$prefix$floor-${index + 1}";
               }
-              return Opening(label: doorLabel);
+              return Opening(label: doorLabel, buildingLabel: prefix);
             }),
           ),
         ),
         if (hasRailing)
           Positioned(
             bottom: 0,
-            left: 5,
-            right: 5,
+            left: 10,
+            right: 10,
             child: IgnorePointer(
               child: Container(
                 height: 15,
@@ -172,7 +171,7 @@ class OpeningRow extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    25,
+                    20,
                     (index) => Container(width: 1.5, color: Colors.white),
                   ),
                 ),
@@ -186,7 +185,8 @@ class OpeningRow extends StatelessWidget {
 
 class Opening extends StatelessWidget {
   final String label;
-  const Opening({super.key, required this.label});
+  final String buildingLabel;
+  const Opening({super.key, required this.label, required this.buildingLabel});
 
   String _getImagePath(String name) {
     final String n = name.toLowerCase();
@@ -196,14 +196,85 @@ class Opening extends StatelessWidget {
     return 'lib/assets/C11_2.jpg';
   }
 
+  void _showScheduleTable(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text("Horario - $label", style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              child: Table(
+                defaultColumnWidth: const FixedColumnWidth(80),
+                border: TableBorder.all(color: Colors.grey.shade300),
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(color: Colors.grey.shade100),
+                    children: ['Hora', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie']
+                        .map((day) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(day, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.center),
+                            ))
+                        .toList(),
+                  ),
+                  ...List.generate(16, (index) {
+                    int hour = 7 + index;
+                    return TableRow(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("${hour.toString().padLeft(2, '0')}:00", textAlign: TextAlign.center, style: const TextStyle(fontSize: 10)),
+                        ),
+                        ...List.generate(5, (day) => const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("-", textAlign: TextAlign.center, style: TextStyle(fontSize: 10)),
+                        )),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Volver")),
+        ],
+      ),
+    );
+  }
+
   void _showSalonDialog(BuildContext context) {
     final String imagePath = _getImagePath(label);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(label),
-        content: Text("Hola, este es el salón: $label"),
+        title: Text("Detalles del Salón"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _infoRow("Nombre:", label),
+            _infoRow("Edificio:", "Edificio $buildingLabel"),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () => _showScheduleTable(context),
+                icon: const Icon(Icons.calendar_month),
+                label: const Text("Ver Horario Semanal"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1CB0F6),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () {
@@ -214,10 +285,20 @@ class Opening extends StatelessWidget {
             },
             child: const Text("Ver Panorama 360"),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cerrar"),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cerrar")),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 80, child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(child: Text(value)),
         ],
       ),
     );
@@ -231,14 +312,10 @@ class Opening extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 32,
+            width: 30,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 5.0,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1CB0F6),
-              ),
+              style: const TextStyle(fontSize: 5.5, fontWeight: FontWeight.bold, color: Color(0xFF1CB0F6)),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -246,21 +323,11 @@ class Opening extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Container(
-            width: 22,
-            height: 45,
+            width: 22, height: 45,
             decoration: const BoxDecoration(
               color: Color(0xFF84D8FF),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0xFF1CB0F6),
-                  offset: Offset(0, 3),
-                  blurRadius: 0,
-                ),
-              ],
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+              boxShadow: [BoxShadow(color: Color(0xFF1CB0F6), offset: Offset(0, 3), blurRadius: 0)],
             ),
           ),
         ],
@@ -270,16 +337,8 @@ class Opening extends StatelessWidget {
 }
 
 class BuildingStairs extends StatelessWidget {
-  final bool roundLeft;
-  final bool roundRight;
   final int totalSteps;
-
-  const BuildingStairs({
-    super.key,
-    this.roundLeft = false,
-    this.roundRight = false,
-    this.totalSteps = 10,
-  });
+  const BuildingStairs({super.key, this.totalSteps = 10});
 
   @override
   Widget build(BuildContext context) {
@@ -294,15 +353,11 @@ class BuildingStairs extends StatelessWidget {
         int stepInCycle = (totalSteps - 1 - index) % stepsPerFloor;
         double darknessFactor = stepInCycle / (stepsPerFloor - 1);
         Color currentColor = Color.lerp(baseColor, darkColor, darknessFactor)!;
-
         return Container(
-          width: 35,
-          height: 17.2,
+          width: 35, height: 17.2,
           decoration: BoxDecoration(
             color: currentColor,
-            border: Border(
-              bottom: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5),
-            ),
+            border: Border(bottom: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5)),
           ),
         );
       }),

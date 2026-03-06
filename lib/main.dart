@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isIsometric = true;
   String _selectedFilter = 'Todos';
 
-  // Nuevo Orden Real (2D): E, C, B, A, D
+  // Orden Real (2D): E, C, B, A, D
   final List<String> _buildingOrder = ["E", "C", "B", "A", "D"];
 
   final List<Map<String, String>> _allContacts = [
@@ -110,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double blockWidth = _buildingWidth + _stairsWidth;
     
+    // Objeto invisible: centro del edificio en la planta detallada
     double buildingCenterX = screenWidth + (page * blockWidth) + (_buildingWidth / 2);
     double buildingCenterY = 1500 - 300 - 150; 
 
@@ -292,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final filteredContacts = _selectedFilter == 'Todos' ? _allContacts : _allContacts.where((c) => c['tipo'] == _selectedFilter).toList();
     return Container(
       width: MediaQuery.of(context).size.width * 0.95, padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))]),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20, offset: const Offset(0, 10))]),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -342,6 +343,7 @@ class _CampusViewState extends State<CampusView> {
             final RenderBox box = context.findRenderObject() as RenderBox;
             final Offset localPos = box.globalToLocal(details.globalPosition);
             final Size size = Size(constraints.maxWidth, constraints.maxHeight);
+            // Detección de toques de adelante hacia atrás
             for (var b in buildings.reversed) {
               if (painter.getRoofPath(b, size).contains(localPos)) {
                 widget.onBuildingTap(b['index'] as int);
