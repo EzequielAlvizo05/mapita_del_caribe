@@ -1,0 +1,181 @@
+{
+  "templates": {
+    "sch_manana": {
+      "1": {"7": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "8": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "9": {"s": "Física Clásica", "t": "Mtra. Jiménez"}, "10": {"s": "Física Clásica", "t": "Mtra. Jiménez"}},
+      "2": {"7": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "8": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "9": {"s": "Física Clásica", "t": "Mtra. Jiménez"}, "10": {"s": "Física Clásica", "t": "Mtra. Jiménez"}},
+      "3": {"7": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "8": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "9": {"s": "Física Clásica", "t": "Mtra. Jiménez"}, "10": {"s": "Física Clásica", "t": "Mtra. Jiménez"}},
+      "4": {"7": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "8": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "9": {"s": "Física Clásica", "t": "Mtra. Jiménez"}, "10": {"s": "Física Clásica", "t": "Mtra. Jiménez"}},
+      "5": {"7": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "8": {"s": "Cálculo Integral", "t": "Ing. Rodríguez"}, "9": {"s": "Física Clásica", "t": "Mtra. Jiménez"}, "10": {"s": "Física Clásica", "t": "Mtra. Jiménez"}}
+    },
+    "sch_tarde": {
+      "1": {"16": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "17": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "18": {"s": "Redes I", "t": "Ing. Sánchez"}, "19": {"s": "Redes I", "t": "Ing. Sánchez"}},
+      "2": {"16": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "17": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "18": {"s": "Redes I", "t": "Ing. Sánchez"}, "19": {"s": "Redes I", "t": "Ing. Sánchez"}},
+      "3": {"16": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "17": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "18": {"s": "Redes I", "t": "Ing. Sánchez"}, "19": {"s": "Redes I", "t": "Ing. Sánchez"}},
+      "4": {"16": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "17": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "18": {"s": "Redes I", "t": "Ing. Sánchez"}, "19": {"s": "Redes I", "t": "Ing. Sánchez"}},
+      "5": {"16": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "17": {"s": "Sistemas Operativos", "t": "Dr. Martínez"}, "18": {"s": "Redes I", "t": "Ing. Sánchez"}, "19": {"s": "Redes I", "t": "Ing. Sánchez"}}
+    },
+    "sch_mixto": {
+      "1": {"10": {"s": "Contabilidad", "t": "CP. Ramírez"}, "11": {"s": "Contabilidad", "t": "CP. Ramírez"}},
+      "2": {"14": {"s": "Administración", "t": "Mtra. Ortiz"}, "15": {"s": "Administración", "t": "Mtra. Ortiz"}},
+      "3": {"10": {"s": "Contabilidad", "t": "CP. Ramírez"}, "11": {"s": "Contabilidad", "t": "CP. Ramírez"}},
+      "4": {"14": {"s": "Administración", "t": "Mtra. Ortiz"}, "15": {"s": "Administración", "t": "Mtra. Ortiz"}},
+      "5": {"10": {"s": "Ética Profesional", "t": "Lic. Vega"}}
+    }
+  },
+  "E": {
+    "4": [
+      {"label": "E4-1", "name": "Salón E4-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "E4-2", "name": "Salón E4-2", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_tarde"},
+      {"label": "E4-3", "name": "Salón E4-3", "type": "Aula", "extras": "", "sch": "sch_mixto"},
+      {"label": "E4-4", "name": "Salón E4-4", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_manana"},
+      {"label": "E4-5", "name": "Salón E4-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "E4-6", "name": "Salón E4-6", "type": "Aula", "extras": "Material didáctico", "sch": "sch_mixto"}
+    ],
+    "3": [
+      {"label": "E3-1", "name": "Salón E3-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "E3-2", "name": "Salón E3-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "E3-3", "name": "Salón E3-3", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "E3-4", "name": "Salón E3-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "E3-5", "name": "Salón E3-5", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_tarde"},
+      {"label": "E3-6", "name": "Salón E3-6", "type": "Aula", "extras": "", "sch": "sch_mixto"}
+    ],
+    "2": [
+      {"label": "E2-1", "name": "Salón E2-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "E2-2", "name": "Salón E2-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "E2-3", "name": "Salón E2-3", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "E2-4", "name": "Salón E2-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "E2-5", "name": "Salón E2-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "E2-6", "name": "Salón E2-6", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"}
+    ],
+    "1": [
+      {"label": "E1-1", "name": "Salón E1-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "E1-2", "name": "Salón E1-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "E1-3", "name": "Salón E1-3", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"},
+      {"label": "E1-4", "name": "Salón E1-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "E1-5", "name": "Salón E1-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "E1-6", "name": "Salón E1-6", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "E1-7", "name": "Salón E1-7", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "E1-8", "name": "Salón E1-8", "type": "Aula", "extras": "Proyector", "sch": "sch_tarde"}
+    ]
+  },
+  "C": {
+    "3": [
+      {"label": "C3-1", "name": "Salón C3-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "C3-2", "name": "Salón C3-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "C3-3", "name": "Salón C3-3", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"},
+      {"label": "C3-4", "name": "Salón C3-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "C3-5", "name": "Salón C3-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "C3-6", "name": "Salón C3-6", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"}
+    ],
+    "2": [
+      {"label": "C2-1", "name": "Salón C2-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "C2-2", "name": "Salón C2-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "C2-3", "name": "Salón C2-3", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "C2-4", "name": "Salón C2-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "C2-5", "name": "Salón C2-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "C2-6", "name": "Salón C2-6", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"}
+    ],
+    "1": [
+      {"label": "C1-1", "name": "Salón C1-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "C1-2", "name": "Salón C1-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "C1-3", "name": "Salón C1-3", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"},
+      {"label": "C1-4", "name": "Salón C1-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "C1-5", "name": "Salón C1-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "C1-6", "name": "Salón C1-6", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "C1-7", "name": "Salón C1-7", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "C1-8", "name": "Salón C1-8", "type": "Aula", "extras": "Proyector", "sch": "sch_tarde"}
+    ]
+  },
+  "B": {
+    "3": [
+      {"label": "B3-1", "name": "Salón B3-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "B3-2", "name": "Salón B3-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "B3-3", "name": "Salón B3-3", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"},
+      {"label": "B3-4", "name": "Salón B3-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "B3-5", "name": "Salón B3-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "B3-6", "name": "Salón B3-6", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"}
+    ],
+    "2": [
+      {"label": "B2-1", "name": "Salón B2-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "B2-2", "name": "Salón B2-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "B2-3", "name": "Salón B2-3", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "B2-4", "name": "Salón B2-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "B2-5", "name": "Salón B2-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "B2-6", "name": "Salón B2-6", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"}
+    ],
+    "1": [
+      {"label": "B1-1", "name": "Salón B1-1", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "B1-2", "name": "Salón B1-2", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "B1-3", "name": "Salón B1-3", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"},
+      {"label": "B1-4", "name": "Salón B1-4", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "B1-5", "name": "Salón B1-5", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "B1-6", "name": "Salón B1-6", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_mixto"},
+      {"label": "B1-7", "name": "Salón B1-7", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "B1-8", "name": "Salón B1-8", "type": "Aula", "extras": "Proyector", "sch": "sch_tarde"}
+    ]
+  },
+  "A": {
+    "3": [
+      {"label": "Radio", "name": "Cabina de Radio", "type": "Laboratorio", "extras": "Micrófonos, Consola", "sch": "sch_tarde", "teacher": "Lic. Roberto Cana"},
+      {"label": "Orientación", "name": "Orientación Personal", "type": "Oficina", "extras": "", "sch": "sch_manana"},
+      {"label": "15A", "name": "Aula 15A", "type": "Aula", "extras": "Proyector", "sch": "sch_mixto"},
+      {"label": "16A", "name": "Aula 16A", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "17A", "name": "Aula 17A", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_tarde"},
+      {"label": "18A", "name": "Aula 18A", "type": "Aula", "extras": "", "sch": "sch_mixto"},
+      {"label": "19A", "name": "Aula 19A", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_manana"},
+      {"label": "20A", "name": "Aula 20A", "type": "Aula", "extras": "Proyector", "sch": "sch_tarde"},
+      {"label": "21A", "name": "Aula 21A", "type": "Aula", "extras": "", "sch": "sch_mixto"},
+      {"label": "22A", "name": "Aula 22A", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "23A", "name": "Aula 23A", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_tarde"},
+      {"label": "24A", "name": "Aula 24A", "type": "Aula", "extras": "", "sch": "sch_mixto"}
+    ],
+    "2": [
+      {"label": "EyN", "name": "Economía y Negocios (EyN)", "type": "Oficina", "extras": "Computadoras", "sch": "sch_manana"},
+      {"label": "Maestros EyN", "name": "Área de Maestros EyN", "type": "Oficina", "extras": "Cubículos", "sch": "sch_tarde"},
+      {"label": "SITE A", "name": "SITE A", "type": "Laboratorio", "extras": "Servidores, Rack", "sch": "sch_manana"},
+      {"label": "8A", "name": "Aula 8A", "type": "Aula", "extras": "Proyector", "sch": "sch_mixto"},
+      {"label": "9A", "name": "Aula 9A", "type": "Aula", "extras": "", "sch": "sch_manana"},
+      {"label": "10A", "name": "Aula 10A", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_tarde"},
+      {"label": "11A", "name": "Aula 11A", "type": "Aula", "extras": "", "sch": "sch_mixto"},
+      {"label": "12A", "name": "Aula 12A", "type": "Aula", "extras": "Aire acondicionado", "sch": "sch_manana"},
+      {"label": "13A", "name": "Aula 13A", "type": "Aula", "extras": "Proyector", "sch": "sch_tarde"},
+      {"label": "14A", "name": "Aula 14A", "type": "Aula", "extras": "", "sch": "sch_mixto"}
+    ],
+    "1": [
+      {"label": "Rectoria", "name": "Rectoría", "type": "Oficina", "extras": "Sala juntas", "sch": "sch_manana"},
+      {"label": "Jurídico", "name": "Departamento Jurídico", "type": "Oficina", "extras": "", "sch": "sch_tarde"},
+      {"label": "Transparencia", "name": "Unidad de Transparencia", "type": "Oficina", "extras": "", "sch": "sch_mixto"},
+      {"label": "Inclusión", "name": "Inclusión Educativa", "type": "Oficina", "extras": "", "sch": "sch_manana"},
+      {"label": "Coord. Admin", "name": "Coordinación Administrativa", "type": "Oficina", "extras": "", "sch": "sch_tarde"},
+      {"label": "R. Humanos", "name": "Recursos Humanos", "type": "Oficina", "extras": "", "sch": "sch_mixto"},
+      {"label": "Compras", "name": "Departamento de Compras", "type": "Oficina", "extras": "", "sch": "sch_manana"},
+      {"label": "Auditorio Al", "name": "Auditorio Al", "type": "Auditorio", "extras": "Sonido, Proyector", "sch": "sch_tarde"},
+      {"label": "Gastronomía", "name": "Aula Demo Gastronomía", "type": "Laboratorio", "extras": "Material cocina, Estufas", "sch": "sch_manana", "teacher": "Chef. Antonio Solís"},
+      {"label": "3A", "name": "Aula 3A", "type": "Aula", "extras": "", "sch": "sch_mixto"},
+      {"label": "4A", "name": "Aula 4A", "type": "Aula", "extras": "Proyector", "sch": "sch_manana"},
+      {"label": "5A", "name": "Aula 5A", "type": "Aula", "extras": "", "sch": "sch_tarde"},
+      {"label": "6A", "name": "Aula 6A", "type": "Aula", "extras": "Dos pizarrones", "sch": "sch_mixto"},
+      {"label": "7A", "name": "Aula 7A", "type": "Aula", "extras": "", "sch": "sch_manana"}
+    ]
+  },
+  "D": {
+    "3": [
+      {"label": "Centro Inv. Aplicada", "name": "Centro de Investigación Aplicada", "type": "Laboratorio", "extras": "Microscopios, Reactivos", "sch": "sch_manana", "teacher": "Dra. Elena Vazquez"}
+    ],
+    "2": [
+      {"label": "Biblioteca", "name": "Biblioteca", "type": "Centro Información", "extras": "Libros, PCs, Mesas", "sch": "sch_manana", "teacher": "Mtra. Silvia Luna"}
+    ],
+    "1": [
+      {"label": "Explanada", "name": "Explanada Principal", "type": "Área Común", "extras": "", "sch": "sch_mixto"},
+      {"label": "Auditorio Principal", "name": "Auditorio Principal", "type": "Auditorio", "extras": "Pantalla, Sonido", "sch": "sch_manana"},
+      {"label": "Sec. Extensión", "name": "Secretaría de Extensión y Vinculación", "type": "Oficina", "extras": "", "sch": "sch_tarde"},
+      {"label": "Vinculación", "name": "Vinculación Universitaria", "type": "Oficina", "extras": "", "sch": "sch_mixto"},
+      {"label": "Serv. Social", "name": "Servicio Social", "type": "Oficina", "extras": "", "sch": "sch_manana"},
+      {"label": "Comunicación", "name": "Comunicación", "type": "Oficina", "extras": "", "sch": "sch_tarde"},
+      {"label": "Sostenibilidad", "name": "Sostenibilidad", "type": "Oficina", "extras": "", "sch": "sch_mixto"},
+      {"label": "Prácticas", "name": "Prácticas Profesionales", "type": "Oficina", "extras": "", "sch": "sch_manana"},
+      {"label": "Tienda Uni.", "name": "Tienda Universitaria", "type": "Servicio", "extras": "Souvenirs", "sch": "sch_tarde"},
+      {"label": "Patronato", "name": "Patronato de la Universidad", "type": "Oficina", "extras": "", "sch": "sch_mixto"}
+    ]
+  }
+}

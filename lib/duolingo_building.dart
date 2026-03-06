@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'panorama_view.dart';
+
+/// ======================================================
+/// MODELOS DE DATOS
+/// ======================================================
 
 class DuolingoBuilding extends StatelessWidget {
   final String label;
@@ -42,7 +48,6 @@ class DuolingoBuilding extends StatelessWidget {
         ...List.generate(totalPisos, (index) {
           int floorNum = totalPisos - index;
           bool isGround = floorNum == 1;
-          
           List<String>? salonsForFloor = customSalons?[floorNum];
           int doorCount = salonsForFloor?.length ?? (isGround ? 8 : 6);
 
@@ -188,15 +193,21 @@ class Opening extends StatelessWidget {
   final String buildingLabel;
   const Opening({super.key, required this.label, required this.buildingLabel});
 
-  String _getImagePath(String name) {
-    final String n = name.toLowerCase();
-    if (n.contains('biblioteca')) return 'lib/assets/Biblio.jpg';
-    if (n.contains('prácticas')) return 'lib/assets/Practicas.jpg';
-    if (n.contains('gastronomía')) return 'lib/assets/Tallercocina.jpg';
-    return 'lib/assets/C11_2.jpg';
+  Future<Map<String, dynamic>?> _loadData() async {
+    try {
+      final String response = await rootBundle.loadString('data/salones.json');
+      return json.decode(response);
+    } catch (e) {
+      debugPrint("Error cargando JSON: $e");
+      return null;
+    }
   }
 
-  void _showScheduleTable(BuildContext context) {
+  void _showScheduleTable(BuildContext context, Map<String, dynamic> allData, Map<String, dynamic>? salonData) {
+    final String? schKey = salonData?['sch'];
+    final templates = allData['templates'] as Map<String, dynamic>?;
+    final schedule = templates?[schKey] as Map<String, dynamic>?;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -208,30 +219,37 @@ class Opening extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: SingleChildScrollView(
               child: Table(
-                defaultColumnWidth: const FixedColumnWidth(80),
+                defaultColumnWidth: const FixedColumnWidth(120),
                 border: TableBorder.all(color: Colors.grey.shade300),
                 children: [
                   TableRow(
                     decoration: BoxDecoration(color: Colors.grey.shade100),
-                    children: ['Hora', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie']
-                        .map((day) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(day, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.center),
-                            ))
-                        .toList(),
+                    children: ['Hora', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie'].map((day) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(day, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12), textAlign: TextAlign.center),
+                    )).toList(),
                   ),
                   ...List.generate(16, (index) {
                     int hour = 7 + index;
+                    String hStr = hour.toString();
                     return TableRow(
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("${hour.toString().padLeft(2, '0')}:00", textAlign: TextAlign.center, style: const TextStyle(fontSize: 10)),
+                          child: Text("${hStr.padLeft(2, '0')}:00", textAlign: TextAlign.center, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                         ),
-                        ...List.generate(5, (day) => const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("-", textAlign: TextAlign.center, style: TextStyle(fontSize: 10)),
-                        )),
+                        ...List.generate(5, (dayIndex) {
+                          String dStr = (dayIndex + 1).toString();
+                          var entry = schedule?[dStr]?[hStr];
+                          String cellText = "-";
+                          if (entry != null) {
+                            cellText = "${entry['s']}\n${entry['t']}";
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(cellText, textAlign: TextAlign.center, style: const TextStyle(fontSize: 9)),
+                          );
+                        }),
                       ],
                     );
                   }),
@@ -247,23 +265,51 @@ class Opening extends StatelessWidget {
     );
   }
 
-  void _showSalonDialog(BuildContext context) {
-    final String imagePath = _getImagePath(label);
+  void _showSalonDialog(BuildContext context) async {
+    final allData = await _loadData();
+    if (allData == null || !context.mounted) return;
+
+    Map<String, dynamic>? salonData;
+    final buildingData = allData[buildingLabel] as Map<String, dynamic>?;
+    if (buildingData != null) {
+      for (var floor in buildingData.values) {
+        for (var s in (floor as List)) {
+          if (s['label'] == label) {
+            salonData = s as Map<String, dynamic>;
+            break;
+          }
+        }
+      }
+    }
+
+    final String fullName = salonData?['name'] ?? label;
+    final String tipo = salonData?['type'] ?? "Aula";
+    final String? maestro = salonData?['teacher'];
+    final String? extras = salonData?['extras'];
+
+    final String imagePath = _getImagePath(fullName);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text("Detalles del Salón"),
+        title: const Text("Información del Salón", style: TextStyle(fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoRow("Nombre:", label),
+            _infoRow("Nombre:", fullName),
             _infoRow("Edificio:", "Edificio $buildingLabel"),
+            _infoRow("Tipo:", tipo),
+            if (maestro != null) _infoRow("Maestro:", maestro),
+            if (extras != null && extras.isNotEmpty) _infoRow("Extras:", extras),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton.icon(
-                onPressed: () => _showScheduleTable(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showScheduleTable(context, allData, salonData);
+                },
                 icon: const Icon(Icons.calendar_month),
                 label: const Text("Ver Horario Semanal"),
                 style: ElevatedButton.styleFrom(
@@ -283,12 +329,21 @@ class Opening extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => PanoramaViewPage(imagePath: imagePath)),
               );
             },
+            style: TextButton.styleFrom(foregroundColor: const Color(0xFF58CC02)),
             child: const Text("Ver Panorama 360"),
           ),
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cerrar")),
         ],
       ),
     );
+  }
+
+  String _getImagePath(String name) {
+    final String n = name.toLowerCase();
+    if (n.contains('biblioteca')) return 'lib/assets/Biblio.jpg';
+    if (n.contains('prácticas')) return 'lib/assets/Practicas.jpg';
+    if (n.contains('gastronomía')) return 'lib/assets/Tallercocina.jpg';
+    return 'lib/assets/C11_2.jpg';
   }
 
   Widget _infoRow(String title, String value) {
@@ -312,7 +367,7 @@ class Opening extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 30,
+            width: 32,
             child: Text(
               label,
               style: const TextStyle(fontSize: 5.5, fontWeight: FontWeight.bold, color: Color(0xFF1CB0F6)),
