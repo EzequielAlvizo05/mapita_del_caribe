@@ -21,3 +21,9 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/C11_2.jpg
+    - lib/assets/Biblio.jpg
+    - lib/assets/Practicas.jpg
+    - lib/assets/Tallercocina.jpg
+    - lib/assets/Vinculacion.jpg
+    - lib/assets/EdificioF.jpg
+    - lib/assets/Patronato.jpg

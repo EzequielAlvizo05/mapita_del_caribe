@@ -17,7 +17,7 @@ class DuolingoBuilding extends StatelessWidget {
   Widget build(BuildContext context) {
     const beigeColor = Color(0xFFF1E5D1);
     const beigeShadow = Color(0xFFD6C8B0);
-    const buildingWidth = 450.0;
+    const buildingWidth = 550.0;
 
     int totalPisos = 3 + extraFloors;
 
@@ -133,8 +133,9 @@ class OpeningRow extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
           child: Row(
+            // Distribución justificada para múltiples puertas, centrada para una sola
             mainAxisAlignment: count <= 1 ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(count, (index) {
@@ -151,8 +152,8 @@ class OpeningRow extends StatelessWidget {
         if (hasRailing)
           Positioned(
             bottom: 0,
-            left: 10,
-            right: 10,
+            left: 5,
+            right: 5,
             child: IgnorePointer(
               child: Container(
                 height: 15,
@@ -171,7 +172,7 @@ class OpeningRow extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    20,
+                    25,
                     (index) => Container(width: 1.5, color: Colors.white),
                   ),
                 ),
@@ -187,32 +188,22 @@ class Opening extends StatelessWidget {
   final String label;
   const Opening({super.key, required this.label});
 
-  // Mapeo dinámico de fotos corregido según especificaciones exactas
-  String _getImagePath(String salonLabel) {
-    final String cleanLabel = salonLabel.toLowerCase();
-    
-    // 1. Salón de Prácticas
-    if (cleanLabel.contains('prácticas')) return 'lib/assets/Practicas.jpg';
-    
-    // 2. Biblioteca
-    if (cleanLabel.contains('biblioteca')) return 'lib/assets/Biblio.jpg';
-    
-    // 3. Gastronomía
-    if (cleanLabel.contains('gastronomía')) return 'lib/assets/Tallercocina.jpg';
-    
-    // 4. Todos los demás
+  String _getImagePath(String name) {
+    final String n = name.toLowerCase();
+    if (n.contains('biblioteca')) return 'lib/assets/Biblio.jpg';
+    if (n.contains('prácticas')) return 'lib/assets/Practicas.jpg';
+    if (n.contains('gastronomía')) return 'lib/assets/Tallercocina.jpg';
     return 'lib/assets/C11_2.jpg';
   }
 
   void _showSalonDialog(BuildContext context) {
     final String imagePath = _getImagePath(label);
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(label),
-        content: Text("Hola, este es el espacio: $label"),
+        content: Text("Hola, este es el salón: $label"),
         actions: [
           TextButton(
             onPressed: () {
@@ -221,7 +212,6 @@ class Opening extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => PanoramaViewPage(imagePath: imagePath)),
               );
             },
-            style: TextButton.styleFrom(foregroundColor: const Color(0xFF1CB0F6)),
             child: const Text("Ver Panorama 360"),
           ),
           TextButton(
@@ -241,11 +231,11 @@ class Opening extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 28,
+            width: 32,
             child: Text(
               label,
               style: const TextStyle(
-                fontSize: 4.5,
+                fontSize: 5.0,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1CB0F6),
               ),
@@ -303,22 +293,13 @@ class BuildingStairs extends StatelessWidget {
       children: List.generate(totalSteps, (index) {
         int stepInCycle = (totalSteps - 1 - index) % stepsPerFloor;
         double darknessFactor = stepInCycle / (stepsPerFloor - 1);
-        
         Color currentColor = Color.lerp(baseColor, darkColor, darknessFactor)!;
-
-        BorderRadius borderRadius = BorderRadius.only(
-          topLeft: roundLeft ? const Radius.circular(8) : Radius.zero,
-          bottomLeft: roundLeft ? const Radius.circular(8) : Radius.zero,
-          topRight: roundRight ? const Radius.circular(8) : Radius.zero,
-          bottomRight: roundRight ? const Radius.circular(8) : Radius.zero,
-        );
 
         return Container(
           width: 35,
           height: 17.2,
           decoration: BoxDecoration(
             color: currentColor,
-            borderRadius: borderRadius,
             border: Border(
               bottom: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5),
             ),

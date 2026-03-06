@@ -35,13 +35,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late final ScrollController _scrollController;
+  late final TransformationController _transformationController;
   int _currentPage = 0;
-  final double _buildingWidth = 450.0; 
+  final double _buildingWidth = 550.0;
   final double _stairsWidth = 35.0;
   bool _showContacts = false;
-  bool _isIsometric = true; 
+  bool _isIsometric = true;
   String _selectedFilter = 'Todos';
+
+  // Nuevo Orden Real (2D): E, C, B, A, D
+  final List<String> _buildingOrder = ["E", "C", "B", "A", "D"];
 
   final List<Map<String, String>> _allContacts = [
     {'nombre': 'Juan Pérez', 'lugar': 'Edificio A', 'contacto': 'juan@univ.edu', 'horario': '08:00 - 16:00', 'tipo': 'Administrativos'},
@@ -66,27 +69,61 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _transformationController = TransformationController();
+    _transformationController.addListener(_updateCurrentPageByScroll);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _transformationController.removeListener(_updateCurrentPageByScroll);
+    _transformationController.dispose();
     super.dispose();
   }
 
-  void _scrollToPage(int page) {
+  void _updateCurrentPageByScroll() {
+    if (_isIsometric) return;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double scale = _transformationController.value.getMaxScaleOnAxis();
+    final double xOffset = _transformationController.value.getTranslation().x;
+    final double mapCenterX = (screenWidth / 2 - xOffset) / scale;
+
+    double minDistance = double.infinity;
+    int closestBuilding = _currentPage;
     final double blockWidth = _buildingWidth + _stairsWidth;
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        page * blockWidth,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOutCubic,
-      );
+
+    for (int i = 0; i < _buildingOrder.length; i++) {
+      double buildingCenterX = screenWidth + (i * blockWidth) + (_buildingWidth / 2);
+      double distance = (mapCenterX - buildingCenterX).abs();
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestBuilding = i;
+      }
     }
-    setState(() {
-      _currentPage = page;
-    });
+
+    if (closestBuilding != _currentPage) {
+      setState(() => _currentPage = closestBuilding);
+    }
+  }
+
+  void _scrollToPage(int page) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double blockWidth = _buildingWidth + _stairsWidth;
+    
+    double buildingCenterX = screenWidth + (page * blockWidth) + (_buildingWidth / 2);
+    double buildingCenterY = 1500 - 300 - 150; 
+
+    double currentScale = _transformationController.value.getMaxScaleOnAxis();
+    if (currentScale < 0.5) currentScale = 1.0; 
+
+    double tx = (screenWidth / 2) - (buildingCenterX * currentScale);
+    double ty = (screenHeight / 2) - (buildingCenterY * currentScale);
+    
+    _transformationController.value = Matrix4.identity()
+      ..translate(tx, ty)
+      ..scale(currentScale);
+    
+    setState(() => _currentPage = page);
   }
 
   void _goToBuilding(int index) {
@@ -94,9 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _isIsometric = false;
       _currentPage = index;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToPage(index);
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToPage(index));
   }
 
   Widget _buildBuildingInfo(int page) {
@@ -121,7 +156,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double initialPadding = (screenWidth / 2) - (_buildingWidth / 2);
 
     return Scaffold(
       backgroundColor: const Color(0xFFE8F5E9),
@@ -143,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   duration: const Duration(milliseconds: 500),
                   child: _isIsometric 
                     ? _buildIsometricCampus() 
-                    : _buildMapView(screenWidth, initialPadding),
+                    : _buildMapView(screenWidth),
                 ),
               ),
               if (!_isIsometric)
@@ -152,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: const Color(0xFFE8F5E9),
                   child: Column(
                     children: [
-                      Text('Edificio ${["E", "C", "B", "A", "D"][_currentPage]} - Información', 
+                      Text('Edificio ${_buildingOrder[_currentPage]} - Información', 
                         style: const TextStyle(color: Color(0xFF4B6350), fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       _buildBuildingInfo(_currentPage),
@@ -161,11 +195,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
             ],
           ),
+          
           if (_showContacts)
             GestureDetector(
               onTap: () => setState(() => _showContacts = false),
               child: Container(color: Colors.black26, child: Center(child: GestureDetector(onTap: () {}, child: _buildContactsBubble()))),
             ),
+
+          if (!_isIsometric && !_showContacts)
+            Positioned(
+              left: 20, bottom: 120,
+              child: _NavButton(icon: Icons.arrow_back_rounded, onPressed: _currentPage > 0 ? () => _scrollToPage(_currentPage - 1) : null),
+            ),
+          
+          if (!_isIsometric && !_showContacts)
+            Positioned(
+              right: 20, bottom: 120,
+              child: _NavButton(icon: Icons.arrow_forward_rounded, onPressed: _currentPage < 4 ? () => _scrollToPage(_currentPage + 1) : null),
+            ),
+
           Positioned(
             right: 20, top: 10,
             child: GestureDetector(
@@ -177,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 60, height: 60,
                     decoration: BoxDecoration(
                       color: Colors.white, shape: BoxShape.circle,
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4))],
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4))],
                     ),
                   ),
                   Icon(_showContacts ? Icons.map_rounded : Icons.contacts_rounded, size: 30, color: const Color(0xFF1CB0F6)),
@@ -200,40 +248,43 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildMapView(double screenWidth, double initialPadding) {
-    return Stack(
-      children: [
-        Positioned.fill(child: Container(color: const Color(0xFFCEF1FF))),
-        Align(alignment: Alignment.bottomCenter, child: Container(height: 200, decoration: const BoxDecoration(color: Color(0xFF58CC02)))),
-        Center(
-          child: RepaintBoundary(
-            child: Container(
-              height: 550, alignment: const Alignment(0, 0.2),
-              child: SingleChildScrollView(
-                controller: _scrollController, scrollDirection: Axis.horizontal, physics: const NeverScrollableScrollPhysics(),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SizedBox(width: initialPadding > 0 ? initialPadding : 0),
-                    // Orden Invertido: E, C, B, A, D
-                    const DuolingoBuilding(key: ValueKey('E_b'), label: 'E', extraFloors: 1),
-                    const BuildingStairs(key: ValueKey('EC_s'), totalSteps: 15),
-                    const DuolingoBuilding(key: ValueKey('C_b'), label: 'C'),
-                    const BuildingStairs(key: ValueKey('CB_s'), totalSteps: 10),
-                    const DuolingoBuilding(key: ValueKey('B_b'), label: 'B'),
-                    const BuildingStairs(key: ValueKey('BA_s'), totalSteps: 10),
-                    DuolingoBuilding(key: const ValueKey('A_b'), label: 'A', extraFloors: 0, customSalons: _buildingASalons),
-                    const BuildingStairs(key: ValueKey('AD_s'), totalSteps: 10),
-                    DuolingoBuilding(key: const ValueKey('D_b'), label: 'D', extraFloors: 0, customSalons: _buildingDSalons),
-                    SizedBox(width: screenWidth / 2),
-                  ],
-                ),
+  Widget _buildMapView(double screenWidth) {
+    final double contentWidth = 5 * _buildingWidth + 4 * _stairsWidth;
+    return InteractiveViewer(
+      transformationController: _transformationController,
+      minScale: 0.1,
+      maxScale: 3.0,
+      constrained: false,
+      boundaryMargin: const EdgeInsets.all(double.infinity),
+      child: SizedBox(
+        width: contentWidth + screenWidth * 2,
+        height: 1500,
+        child: Stack(
+          children: [
+            Positioned.fill(child: Container(color: const Color(0xFFCEF1FF))),
+            Positioned(bottom: 0, left: 0, right: 0, height: 600, child: Container(color: const Color(0xFF58CC02))),
+            Positioned(
+              bottom: 300,
+              left: screenWidth,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // ORDEN 2D: E, C, B, A, D
+                  const DuolingoBuilding(key: ValueKey('E_b'), label: 'E', extraFloors: 1),
+                  const BuildingStairs(key: ValueKey('EC_s'), totalSteps: 15),
+                  const DuolingoBuilding(key: ValueKey('C_b'), label: 'C'),
+                  const BuildingStairs(key: ValueKey('CB_s'), totalSteps: 10),
+                  const DuolingoBuilding(key: ValueKey('B_b'), label: 'B'),
+                  const BuildingStairs(key: ValueKey('BA_s'), totalSteps: 10),
+                  DuolingoBuilding(key: const ValueKey('A_b'), label: 'A', extraFloors: 0, customSalons: _buildingASalons),
+                  const BuildingStairs(key: ValueKey('AD_s'), totalSteps: 10),
+                  DuolingoBuilding(key: const ValueKey('D_b'), label: 'D', extraFloors: 0, customSalons: _buildingDSalons),
+                ],
               ),
             ),
-          ),
+          ],
         ),
-        Positioned(bottom: 20, left: 20, right: 20, child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_NavButton(icon: Icons.arrow_back_rounded, onPressed: _currentPage > 0 ? () => _scrollToPage(_currentPage - 1) : null), _NavButton(icon: Icons.arrow_forward_rounded, onPressed: _currentPage < 4 ? () => _scrollToPage(_currentPage + 1) : null)])),
-      ],
+      ),
     );
   }
 
@@ -241,7 +292,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final filteredContacts = _selectedFilter == 'Todos' ? _allContacts : _allContacts.where((c) => c['tipo'] == _selectedFilter).toList();
     return Container(
       width: MediaQuery.of(context).size.width * 0.95, padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20, offset: const Offset(0, 10))]),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))]),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -271,8 +322,10 @@ class CampusView extends StatefulWidget {
 }
 
 class _CampusViewState extends State<CampusView> {
+  // Orden Painter's Algorithm: de atrás hacia adelante para la vista 3D
+  // El index mapea a la posición en el mapa 2D: E(0), C(1), B(2), A(3), D(4)
   final List<Map<String, dynamic>> buildings = [
-    {'id': 'E', 'cy': 5.1, 'h': 1.6, 'w': 1.2, 'd': 1.0, 'index': 0},
+    {'id': 'E', 'cy': 4.1, 'h': 1.6, 'w': 1.2, 'd': 1.0, 'index': 0},
     {'id': 'C', 'cy': 3.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 1},
     {'id': 'B', 'cy': 2.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 2},
     {'id': 'A', 'cy': 1.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 3},
