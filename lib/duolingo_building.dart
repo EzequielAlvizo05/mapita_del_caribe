@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
+import 'panorama_view.dart';
 
 class DuolingoBuilding extends StatelessWidget {
   final String label;
   final int extraFloors;
+  final Map<int, List<String>>? customSalons;
 
   const DuolingoBuilding({
     super.key,
     required this.label,
     this.extraFloors = 0,
+    this.customSalons,
   });
 
   @override
   Widget build(BuildContext context) {
     const beigeColor = Color(0xFFF1E5D1);
     const beigeShadow = Color(0xFFD6C8B0);
-    const buildingWidth = 260.0;
+    // Aumentamos el ancho a 450 para soportar hasta 14 puertas (Edificio A)
+    const buildingWidth = 450.0;
+
+    int totalPisos = 3 + extraFloors;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Label
         Text(
           label,
           style: const TextStyle(
@@ -29,65 +34,33 @@ class DuolingoBuilding extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        // Roof
         const BuildingFloor(
           color: beigeColor,
           shadowColor: beigeShadow,
           isRoof: true,
           width: buildingWidth,
         ),
-        // Extra Floors (for Building D)
-        ...List.generate(extraFloors, (index) {
-          int floorNum = 4 + index;
+        ...List.generate(totalPisos, (index) {
+          int floorNum = totalPisos - index;
+          bool isGround = floorNum == 1;
+          
+          List<String>? salonsForFloor = customSalons?[floorNum];
+          int doorCount = salonsForFloor?.length ?? (isGround ? 8 : 6);
+
           return BuildingFloor(
             color: beigeColor,
             shadowColor: beigeShadow,
             width: buildingWidth,
+            isGround: isGround,
             child: OpeningRow(
-              count: 6,
-              hasRailing: true,
+              count: doorCount,
+              hasRailing: !isGround,
               prefix: label,
               floor: floorNum,
+              customNames: salonsForFloor,
             ),
           );
         }),
-        // 3rd Floor
-        BuildingFloor(
-          color: beigeColor,
-          shadowColor: beigeShadow,
-          width: buildingWidth,
-          child: OpeningRow(
-            count: 6,
-            hasRailing: true,
-            prefix: label,
-            floor: 3,
-          ),
-        ),
-        // 2nd Floor
-        BuildingFloor(
-          color: beigeColor,
-          shadowColor: beigeShadow,
-          width: buildingWidth,
-          child: OpeningRow(
-            count: 6,
-            hasRailing: true,
-            prefix: label,
-            floor: 2,
-          ),
-        ),
-        // Ground Floor
-        BuildingFloor(
-          color: beigeColor,
-          shadowColor: beigeShadow,
-          isGround: true,
-          width: buildingWidth,
-          child: OpeningRow(
-            count: 8,
-            hasRailing: false,
-            prefix: label,
-            floor: 1,
-          ),
-        ),
       ],
     );
   }
@@ -144,6 +117,7 @@ class OpeningRow extends StatelessWidget {
   final bool hasRailing;
   final String prefix;
   final int floor;
+  final List<String>? customNames;
 
   const OpeningRow({
     super.key,
@@ -151,6 +125,7 @@ class OpeningRow extends StatelessWidget {
     required this.hasRailing,
     required this.prefix,
     required this.floor,
+    this.customNames,
   });
 
   @override
@@ -159,13 +134,18 @@ class OpeningRow extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // "Justificado": spaceBetween si hay varios, center si hay uno solo
+            mainAxisAlignment: count <= 1 ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(count, (index) {
-              // Etiqueta tipo A3-2 (Edificio A, Piso 3, Puerta 2) o A1-5
-              final String doorLabel = "$prefix$floor-${index + 1}";
+              String doorLabel;
+              if (customNames != null && index < customNames!.length) {
+                doorLabel = customNames![index];
+              } else {
+                doorLabel = "$prefix$floor-${index + 1}";
+              }
               return Opening(label: doorLabel);
             }),
           ),
@@ -179,7 +159,7 @@ class OpeningRow extends StatelessWidget {
               child: Container(
                 height: 15,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   border: const Border(
                     top: BorderSide(color: Colors.white, width: 2),
                     left: BorderSide(color: Colors.white, width: 2),
@@ -193,7 +173,7 @@ class OpeningRow extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    15,
+                    20, // Más barandales para el ancho de 450
                     (index) => Container(width: 1.5, color: Colors.white),
                   ),
                 ),
@@ -210,13 +190,27 @@ class Opening extends StatelessWidget {
   const Opening({super.key, required this.label});
 
   void _showSalonDialog(BuildContext context) {
+    final bool isLibrary = label.toLowerCase().contains('biblioteca');
+    final bool isBuildingC = label.contains('C');
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text("Salón $label"),
-        content: Text("Hola, este es el salón $label"),
+        title: Text(label),
+        content: Text("Hola, este es el espacio: $label"),
         actions: [
+          if (isLibrary || isBuildingC)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const PanoramaViewPage()),
+                );
+              },
+              style: TextButton.styleFrom(foregroundColor: const Color(0xFF1CB0F6)),
+              child: const Text("Ver Panorama 360"),
+            ),
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text("Cerrar"),
@@ -233,12 +227,18 @@ class Opening extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 8,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1CB0F6),
+          SizedBox(
+            width: 28, // Ajustado para el ancho 450
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 4.5,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1CB0F6),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(height: 2),
@@ -307,7 +307,7 @@ class BuildingStairs extends StatelessWidget {
             color: currentColor,
             borderRadius: borderRadius,
             border: Border(
-              bottom: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
+              bottom: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5),
             ),
           ),
         );
