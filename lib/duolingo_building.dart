@@ -17,7 +17,6 @@ class DuolingoBuilding extends StatelessWidget {
   Widget build(BuildContext context) {
     const beigeColor = Color(0xFFF1E5D1);
     const beigeShadow = Color(0xFFD6C8B0);
-    // Aumentamos el ancho a 450 para soportar hasta 14 puertas (Edificio A)
     const buildingWidth = 450.0;
 
     int totalPisos = 3 + extraFloors;
@@ -136,7 +135,6 @@ class OpeningRow extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
           child: Row(
-            // "Justificado": spaceBetween si hay varios, center si hay uno solo
             mainAxisAlignment: count <= 1 ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(count, (index) {
@@ -173,7 +171,7 @@ class OpeningRow extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
-                    20, // Más barandales para el ancho de 450
+                    20,
                     (index) => Container(width: 1.5, color: Colors.white),
                   ),
                 ),
@@ -189,9 +187,25 @@ class Opening extends StatelessWidget {
   final String label;
   const Opening({super.key, required this.label});
 
+  // Mapeo dinámico de fotos corregido según especificaciones exactas
+  String _getImagePath(String salonLabel) {
+    final String cleanLabel = salonLabel.toLowerCase();
+    
+    // 1. Salón de Prácticas
+    if (cleanLabel.contains('prácticas')) return 'lib/assets/Practicas.jpg';
+    
+    // 2. Biblioteca
+    if (cleanLabel.contains('biblioteca')) return 'lib/assets/Biblio.jpg';
+    
+    // 3. Gastronomía
+    if (cleanLabel.contains('gastronomía')) return 'lib/assets/Tallercocina.jpg';
+    
+    // 4. Todos los demás
+    return 'lib/assets/C11_2.jpg';
+  }
+
   void _showSalonDialog(BuildContext context) {
-    final bool isLibrary = label.toLowerCase().contains('biblioteca');
-    final bool isBuildingC = label.contains('C');
+    final String imagePath = _getImagePath(label);
 
     showDialog(
       context: context,
@@ -200,17 +214,16 @@ class Opening extends StatelessWidget {
         title: Text(label),
         content: Text("Hola, este es el espacio: $label"),
         actions: [
-          if (isLibrary || isBuildingC)
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const PanoramaViewPage()),
-                );
-              },
-              style: TextButton.styleFrom(foregroundColor: const Color(0xFF1CB0F6)),
-              child: const Text("Ver Panorama 360"),
-            ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => PanoramaViewPage(imagePath: imagePath)),
+              );
+            },
+            style: TextButton.styleFrom(foregroundColor: const Color(0xFF1CB0F6)),
+            child: const Text("Ver Panorama 360"),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text("Cerrar"),
@@ -228,7 +241,7 @@ class Opening extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 28, // Ajustado para el ancho 450
+            width: 28,
             child: Text(
               label,
               style: const TextStyle(

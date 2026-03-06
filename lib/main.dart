@@ -90,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _goToBuilding(int index) {
-    if (index < 0) return;
     setState(() {
       _isIsometric = false;
       _currentPage = index;
@@ -102,11 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildBuildingInfo(int page) {
     switch (page) {
-      case 0: return _infoRow('D - PB Explanada', Icons.event_seat, 'D - N1 Biblioteca', Icons.menu_book);
-      case 1: return _infoRow('A - Rectoria', Icons.person, 'A - N1 EyN', Icons.business);
+      case 0: return _infoRow('E1 - Rectoría', Icons.account_balance, 'E2 - Sala Juntas', Icons.meeting_room);
+      case 1: return _infoRow('C1 - Biblioteca', Icons.menu_book, 'C2 - Cafetería', Icons.coffee);
       case 2: return _infoRow('B1 - Dirección', Icons.admin_panel_settings, 'B2 - Control', Icons.assignment_ind);
-      case 3: return _infoRow('C1 - Biblioteca', Icons.menu_book, 'C2 - Cafetería', Icons.coffee);
-      case 4: return _infoRow('E1 - Rectoría', Icons.account_balance, 'E2 - Sala Juntas', Icons.meeting_room);
+      case 3: return _infoRow('A - Rectoria', Icons.person, 'A - N1 EyN', Icons.business);
+      case 4: return _infoRow('D - PB Explanada', Icons.event_seat, 'D - N1 Biblioteca', Icons.menu_book);
       default: return const SizedBox.shrink();
     }
   }
@@ -153,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: const Color(0xFFE8F5E9),
                   child: Column(
                     children: [
-                      Text('Edificio ${["D", "A", "B", "C", "E"][_currentPage]} - Información', 
+                      Text('Edificio ${["E", "C", "B", "A", "D"][_currentPage]} - Información', 
                         style: const TextStyle(color: Color(0xFF4B6350), fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       _buildBuildingInfo(_currentPage),
@@ -216,16 +215,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     SizedBox(width: initialPadding > 0 ? initialPadding : 0),
-                    // Orden: D, A, B, C, E
-                    DuolingoBuilding(key: const ValueKey('D_b'), label: 'D', extraFloors: 0, customSalons: _buildingDSalons),
-                    const BuildingStairs(key: ValueKey('DA_s'), totalSteps: 10),
-                    DuolingoBuilding(key: const ValueKey('A_b'), label: 'A', extraFloors: 0, customSalons: _buildingASalons),
-                    const BuildingStairs(key: ValueKey('AB_s'), totalSteps: 10),
-                    const DuolingoBuilding(key: ValueKey('B_b'), label: 'B'),
-                    const BuildingStairs(key: ValueKey('BC_s'), totalSteps: 10),
-                    const DuolingoBuilding(key: ValueKey('C_b'), label: 'C'),
-                    const BuildingStairs(key: ValueKey('CE_s'), totalSteps: 15),
+                    // Orden Invertido: E, C, B, A, D
                     const DuolingoBuilding(key: ValueKey('E_b'), label: 'E', extraFloors: 1),
+                    const BuildingStairs(key: ValueKey('EC_s'), totalSteps: 15),
+                    const DuolingoBuilding(key: ValueKey('C_b'), label: 'C'),
+                    const BuildingStairs(key: ValueKey('CB_s'), totalSteps: 10),
+                    const DuolingoBuilding(key: ValueKey('B_b'), label: 'B'),
+                    const BuildingStairs(key: ValueKey('BA_s'), totalSteps: 10),
+                    DuolingoBuilding(key: const ValueKey('A_b'), label: 'A', extraFloors: 0, customSalons: _buildingASalons),
+                    const BuildingStairs(key: ValueKey('AD_s'), totalSteps: 10),
+                    DuolingoBuilding(key: const ValueKey('D_b'), label: 'D', extraFloors: 0, customSalons: _buildingDSalons),
                     SizedBox(width: screenWidth / 2),
                   ],
                 ),
@@ -273,11 +272,11 @@ class CampusView extends StatefulWidget {
 
 class _CampusViewState extends State<CampusView> {
   final List<Map<String, dynamic>> buildings = [
-    {'id': 'E', 'cy': 5.1, 'h': 1.6, 'w': 1.2, 'd': 1.0, 'index': 4},
-    {'id': 'C', 'cy': 3.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 3},
+    {'id': 'E', 'cy': 5.1, 'h': 1.6, 'w': 1.2, 'd': 1.0, 'index': 0},
+    {'id': 'C', 'cy': 3.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 1},
     {'id': 'B', 'cy': 2.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 2},
-    {'id': 'A', 'cy': 1.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 1},
-    {'id': 'D', 'cy': 0.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 0},
+    {'id': 'A', 'cy': 1.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 3},
+    {'id': 'D', 'cy': 0.1, 'h': 1.2, 'w': 1.2, 'd': 1.0, 'index': 4},
   ];
 
   @override

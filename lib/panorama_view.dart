@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 class PanoramaViewPage extends StatelessWidget {
-  const PanoramaViewPage({super.key});
+  final String imagePath;
+  const PanoramaViewPage({super.key, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class PanoramaViewPage extends StatelessWidget {
         ),
       ),
       body: PanoramaViewer(
-        child: Image.asset('lib/assets/C11_2.jpg'),
+        child: Image.asset(imagePath),
       ),
     );
   }
